@@ -5,7 +5,47 @@
 #include <iostream>
 using namespace std;
 
-void streaming(int n, int m, float f[9][101][101]) {
+void streaming(int n, int m, float f[9][101][101], float f_[9][101][101]) {
+	int i, j, k;
+	int c_v[9][2] = { {0, 0}, {1, 0},  {0, 1},   {-1, 0}, {0, -1},
+					 {1, 1}, {-1, 1}, {-1, -1}, {1, -1} };
+	for (j = 0; j <= m; j++) {
+		for (i = 0; i <= n; i++) {
+			for (k = 0; k < 9; k++) {
+				int nx = i + c_v[k][0];
+				int ny = j + c_v[k][1];
+
+				if (k == 1 && nx > n) {
+					break;
+				}
+				if (k == 2 && ny > m) {
+					break;
+				}
+				if (k == 3 && nx == -1) {
+					break;
+				}
+				if (k == 4 && ny == -1) {
+					break;
+				}
+				if (k == 5 && (nx > n || ny > m)) {
+					break;
+				}
+				if (k == 6 && (nx == -1 || ny > m)) {
+					break;
+				}
+				if (k == 7 && (nx == -1 || ny == -1)) {
+					break;
+				}
+				if (k == 8 && (nx > n || ny == -1)) {
+					break;
+				}
+				f[k][nx][ny] = f_[k][i][j];
+			}
+		}
+	}
+}
+
+void streamingt(int n, int m, float f[9][101][101]) {
 	int i, j;
 	for (j = 0; j <= m; j++) {
 		for (i = n; i > 0; i--) {
@@ -42,6 +82,7 @@ void streaming(int n, int m, float f[9][101][101]) {
 void collision(float u[101][101],
 	float v[101][101],
 	float f[9][101][101],
+	float f_[9][101][101],
 	float rho[101][101],
 	float w[9],
 	float cx[9],
@@ -70,7 +111,7 @@ void collision(float u[101][101],
 				}
 				feq[k][i][j] =
 					rho[i][j] * w[k] * (1.0 + 3.0 * t2 + 4.50 * t2 * t2 - 1.50 * t1);
-				f[k][i][j] = omega * feq[k][i][j] + (1 - omega) * f[k][i][j] + force;
+				f_[k][i][j] = omega * feq[k][i][j] + (1 - omega) * f[k][i][j] + force;
 			}
 		}
 	}
@@ -100,31 +141,31 @@ void collisiont(float u[101][101],
 	}
 }
 
-void bounce(float f[9][101][101], int n, int m) {
+void bounce(float f[9][101][101], float f_[9][101][101], int n, int m) {
 	int i, j;
 	// 西入口
 	for (j = 0; j <= m; j++) {
-		f[1][0][j] = f[3][0][j];
-		f[5][0][j] = f[7][0][j];
-		f[8][0][j] = f[6][0][j];
+		f_[1][0][j] = f_[3][0][j];
+		f_[5][0][j] = f_[7][0][j];
+		f_[8][0][j] = f_[6][0][j];
 	}
 	// 北反弹
 	for (i = 0; i <= n; i++) {
-		f[4][i][m] = f[2][i][m];
-		f[8][i][m] = f[6][i][m];
-		f[7][i][m] = f[5][i][m];
+		f_[4][i][m] = f_[2][i][m];
+		f_[8][i][m] = f_[6][i][m];
+		f_[7][i][m] = f_[5][i][m];
 	}
 	// 南反弹
 	for (i = 0; i <= n; i++) {
-		f[2][i][0] = f[4][i][0];
-		f[5][i][0] = f[7][i][0];
-		f[6][i][0] = f[8][i][0];
+		f_[2][i][0] = f_[4][i][0];
+		f_[5][i][0] = f_[7][i][0];
+		f_[6][i][0] = f_[8][i][0];
 	}
 	// 东反弹
 	for (j = 0; j <= m; j++) {
-		f[3][n][j] = f[1][n][j];
-		f[7][n][j] = f[5][n][j];
-		f[6][n][j] = f[8][n][j];
+		f_[3][n][j] = f_[1][n][j];
+		f_[7][n][j] = f_[5][n][j];
+		f_[6][n][j] = f_[8][n][j];
 	}
 }
 
@@ -247,6 +288,7 @@ void Q9(float w[9], float cx[9], float cy[9]) {
 void init(float rho[101][101],
 	float th[101][101],
 	float f[9][101][101],
+	float f_[9][101][101],
 	float g[9][101][101],
 	float u[101][101],
 	float v[101][101],
@@ -263,6 +305,7 @@ void init(float rho[101][101],
 			v[i][j] = 0.0;
 			for (k = 0; k <= 8; k++) {
 				f[k][i][j] = w[k] * rho[i][j];
+				f_[k][i][j] = w[k] * rho[i][j];
 			}
 		}
 	}
@@ -291,15 +334,16 @@ int main() {
 	float cy[9];    // y 方向的声速分量
 	Q9(w, cx, cy);  // 设置权重系数 w 和声速分量 cy cy
 
-	float rho[n + 1][m + 1];   // 密度场
-	float th[n + 1][m + 1];    // 温度场
-	float f[9][n + 1][m + 1];  // 流场分布函数
-	float g[9][n + 1][m + 1];  // 温度场分布函数
-	float u[n + 1][m + 1];     // x 方向的速度分量
-	float v[n + 1][m + 1];     // y 方向的速度分量
-	float rhoo = 6.00;         // 初始密度
-	float tref = 0.5;          // 初始温度
-	init(rho, th, f, g, u, v, n, m, rhoo, w, tref);
+	float rho[n + 1][m + 1];    // 密度场
+	float th[n + 1][m + 1];     // 温度场
+	float f[9][n + 1][m + 1];   // 流场分布函数
+	float f_[9][n + 1][m + 1];  // 流场分布函数
+	float g[9][n + 1][m + 1];   // 温度场分布函数
+	float u[n + 1][m + 1];      // x 方向的速度分量
+	float v[n + 1][m + 1];      // y 方向的速度分量
+	float rhoo = 6.00;          // 初始密度
+	float tref = 0.5;           // 初始温度
+	init(rho, th, f, f_, g, u, v, n, m, rhoo, w, tref);
 
 	float uo, sumvelo, dt, tw, visco, Pr, alpha, Re, omega, omegat, ra, gbeta;
 
@@ -318,12 +362,12 @@ int main() {
 
 	// 主循环
 	for (int kk = 1; kk <= mstep; kk++) {
-		collision(u, v, f, rho, w, cx, cy, n, m, omega, th, gbeta, tref);
-		streaming(n, m, f);
-		bounce(f, n, m);
+		collision(u, v, f, f_, rho, w, cx, cy, n, m, omega, th, gbeta, tref);
+		bounce(f, f_, n, m);
+		streaming(n, m, f, f_);
 		rhouv(f, rho, u, v, cx, cy, n, m);
 		collisiont(u, v, g, th, w, cx, cy, n, m, omegat);
-		streaming(n, m, g);
+		streamingt(n, m, g);
 		gbound(g, w, tw, n, m);
 		tcalcu(g, th, n, m);
 	}
