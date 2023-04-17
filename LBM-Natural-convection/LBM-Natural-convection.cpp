@@ -13,13 +13,6 @@ void streaming(int n, int m, float f[9][101][101], float f_[9][101][101]) {
   for (j = 0; j <= m; j++) {
     for (i = 0; i <= n; i++) {
       for (k = 0; k <= 8; k++) {
-        f[k][i][j] = f_[k][i][j];
-      }
-    }
-  }
-  for (j = 0; j <= m; j++) {
-    for (i = 0; i <= n; i++) {
-      for (k = 0; k <= 8; k++) {
         int nx = i + c_v[k][0];
         int ny = j + c_v[k][1];
 
@@ -119,7 +112,8 @@ void collision(float u[101][101],
   tref = 0.5;
   for (i = 0; i <= n; i++) {
     for (j = 0; j <= m; j++) {
-      if (i == 0 || i == n || j == 0 || j == m) {
+      if (i == 1 || i == (n - 1) || j == 1 || j == (m - 1)) {
+        // if (i == 0 || i == n || j == 0 || j == m) {
         bounce(f, f_, i, j);
         continue;
       }
@@ -127,12 +121,6 @@ void collision(float u[101][101],
       for (k = 0; k <= 8; k++) {
         t2 = u[i][j] * cx[k] + v[i][j] * cy[k];
         force = 3 * w[k] * gbeta * (th[i][j] - tref) * cy[k] * rho[i][j];
-        if (i == 0 || i == n) {
-          force = 0.0;
-        }
-        if (j == 0 || j == m) {
-          force = 0.0;
-        }
         feq[k][i][j] =
             rho[i][j] * w[k] * (1.0 + 3.0 * t2 + 4.50 * t2 * t2 - 1.50 * t1);
         f_[k][i][j] = omega * feq[k][i][j] + (1 - omega) * f[k][i][j] + force;
@@ -222,6 +210,10 @@ void rhouv(float f[9][101][101],
       }
       u[i][j] = usum / rho[i][j];
       v[i][j] = vsum / rho[i][j];
+      if (i == 1 || i == (n - 1) || j == 1 || j == (m - 1)) {
+        u[i][j] = 0;
+        v[i][j] = 0;
+      }
     }
   }
 }
