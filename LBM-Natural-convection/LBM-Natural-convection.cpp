@@ -23,18 +23,6 @@ void streaming(int n, int m, float f[9][101][101], float f_[9][101][101]) {
         int nx = i + c_v[k][0];
         int ny = j + c_v[k][1];
 
-        // if (nx == -1) {
-        //   nx = 0;
-        // }
-        // if (nx > n) {
-        //   nx = n;
-        // }
-        // if (ny == -1) {
-        //   ny = 0;
-        // }
-        // if (ny > n) {
-        //   ny = m;
-        // }
         if (k == 1 && nx > n) {
           continue;
         }
@@ -59,73 +47,10 @@ void streaming(int n, int m, float f[9][101][101], float f_[9][101][101]) {
         if (k == 8 && (nx > n || ny == -1)) {
           continue;
         }
-        // if (k == 1 && nx > n) {
-        //   nx = 0;
-        // }
-        // if (k == 2 && ny > m) {
-        //   ny = 0;
-        // }
-        // if (k == 3 && nx == -1) {
-        //   nx = n;
-        // }
-        // if (k == 4 && ny == -1) {
-        //   ny = m;
-        // }
-        // if (k == 5 && (nx > n || ny > m)) {
-        //   nx = 0;
-        //   ny = 0;
-        // }
-        // if (k == 6 && (nx == -1 || ny > m)) {
-        //   nx = n;
-        //   ny = 0;
-        // }
-        // if (k == 7 && (nx == -1 || ny == -1)) {
-        //   nx = n;
-        //   ny = m;
-        // }
-        // if (k == 8 && (nx > n || ny == -1)) {
-        //   nx = 0;
-        //   ny = m;
-        // }
         f[k][nx][ny] = f_[k][i][j];
       }
     }
   }
-  // for (j = 0; j <= m; j++) {
-  //  for (i = 0; i <= n; i++) {
-  //    f[0][i][j] = f_[0][i][j];
-  //  }
-  //}
-  // for (j = 0; j <= m; j++) {
-  //  for (i = n; i > 0; i--) {
-  //    f[1][i][j] = f_[1][i - 1][j];
-  //  }
-  //  for (i = 0; i <= n - 1; i++) {
-  //    f[3][i][j] = f_[3][i + 1][j];
-  //  }
-  //}
-  // for (j = m; j > 0; j--) {
-  //  for (i = 0; i <= n; i++) {
-  //    f[2][i][j] = f_[2][i][j - 1];
-  //  }
-  //  for (i = n; i > 0; i--) {
-  //    f[5][i][j] = f_[5][i - 1][j - 1];
-  //  }
-  //  for (i = 0; i <= n - 1; i++) {
-  //    f[6][i][j] = f_[6][i + 1][j - 1];
-  //  }
-  //}
-  // for (j = 0; j <= m - 1; j++) {
-  //  for (i = 0; i <= n; i++) {
-  //    f[4][i][j] = f_[4][i][j + 1];
-  //  }
-  //  for (i = 0; i <= n - 1; i++) {
-  //    f[7][i][j] = f_[7][i + 1][j + 1];
-  //  }
-  //  for (i = n; i > 0; i--) {
-  //    f[8][i][j] = f_[8][i - 1][j + 1];
-  //  }
-  //}
 }
 
 void streamingt(int n, int m, float f[9][101][101]) {
