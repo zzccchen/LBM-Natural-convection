@@ -162,6 +162,18 @@ void streamingt(int n, int m, float f[9][101][101]) {
   }
 }
 
+void bounce(float f[9][101][101], float f_[9][101][101], int i, int j) {
+  f_[6][i][j] = f[8][i][j];
+  f_[5][i][j] = f[7][i][j];
+  f_[8][i][j] = f[6][i][j];
+  f_[7][i][j] = f[5][i][j];
+  f_[2][i][j] = f[4][i][j];
+  f_[1][i][j] = f[3][i][j];
+  f_[4][i][j] = f[2][i][j];
+  f_[3][i][j] = f[1][i][j];
+  f_[0][i][j] = f[0][i][j];
+}
+
 void collision(float u[101][101],
                float v[101][101],
                float f[9][101][101],
@@ -182,6 +194,10 @@ void collision(float u[101][101],
   tref = 0.5;
   for (i = 0; i <= n; i++) {
     for (j = 0; j <= m; j++) {
+      if (i == 0 || i == n || j == 0 || j == m) {
+        bounce(f, f_, i, j);
+        continue;
+      }
       t1 = u[i][j] * u[i][j] + v[i][j] * v[i][j];
       for (k = 0; k <= 8; k++) {
         t2 = u[i][j] * cx[k] + v[i][j] * cy[k];
@@ -222,49 +238,6 @@ void collisiont(float u[101][101],
       }
     }
   }
-}
-
-void bounce(float f[9][101][101], float f_[9][101][101], int n, int m) {
-  int i, j;
-  // 西入口
-  for (j = 0; j <= m; j++) {
-    for (i = 0; i <= n; i++) {
-      if (i == 0 || i == n || j == 0 || j == m) {
-        f_[6][i][j] = f[8][i][j];
-        f_[5][i][j] = f[7][i][j];
-        f_[8][i][j] = f[6][i][j];
-        f_[7][i][j] = f[5][i][j];
-        f_[2][i][j] = f[4][i][j];
-        f_[1][i][j] = f[3][i][j];
-        f_[4][i][j] = f[2][i][j];
-        f_[3][i][j] = f[1][i][j];
-        f_[0][i][j] = f[0][i][j];
-      }
-    }
-  }
-  // for (j = 0; j <= m; j++) {
-  //   f_[1][0][j] = f_[3][0][j];
-  //   f_[5][0][j] = f_[7][0][j];
-  //   f_[8][0][j] = f_[6][0][j];
-  // }
-  //// 北反弹
-  // for (i = 0; i <= n; i++) {
-  //   f_[4][i][m] = f_[2][i][m];
-  //   f_[8][i][m] = f_[6][i][m];
-  //   f_[7][i][m] = f_[5][i][m];
-  // }
-  //// 南反弹
-  // for (i = 0; i <= n; i++) {
-  //   f_[2][i][0] = f_[4][i][0];
-  //   f_[5][i][0] = f_[7][i][0];
-  //   f_[6][i][0] = f_[8][i][0];
-  // }
-  //// 东反弹
-  // for (j = 0; j <= m; j++) {
-  //   f_[3][n][j] = f_[1][n][j];
-  //   f_[7][n][j] = f_[5][n][j];
-  //   f_[6][n][j] = f_[8][n][j];
-  // }
 }
 
 void gbound(float g[9][101][101], float w[9], float tw, int n, int m) {
@@ -461,7 +434,6 @@ int main() {
   // 主循环
   for (int kk = 1; kk <= mstep; kk++) {
     collision(u, v, f, f_, rho, w, cx, cy, n, m, omega, th, gbeta, tref);
-    bounce(f, f_, n, m);
     streaming(n, m, f, f_);
     rhouv(f, rho, u, v, cx, cy, n, m);
     collisiont(u, v, g, th, w, cx, cy, n, m, omegat);
