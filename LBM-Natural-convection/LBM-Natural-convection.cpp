@@ -9,38 +9,121 @@ void streaming(int n, int m, float f[9][101][101], float f_[9][101][101]) {
   int i, j, k;
   int c_v[9][2] = {{0, 0}, {1, 0},  {0, 1},   {-1, 0}, {0, -1},
                    {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+
   for (j = 0; j <= m; j++) {
     for (i = 0; i <= n; i++) {
       for (k = 0; k <= 8; k++) {
-        int nx = i + c_v[k][0];
-        int ny = j + c_v[k][1];
-
-        if (k == 1 && nx > n) {
-          continue;
-        }
-        if (k == 2 && ny > m) {
-          continue;
-        }
-        if (k == 3 && nx == -1) {
-          continue;
-        }
-        if (k == 4 && ny == -1) {
-          continue;
-        }
-        if (k == 5 && (nx > n || ny > m)) {
-          continue;
-        }
-        if (k == 6 && (nx == -1 || ny > m)) {
-          continue;
-        }
-        if (k == 7 && (nx == -1 || ny == -1)) {
-          continue;
-        }
-        if (k == 8 && (nx > n || ny == -1)) {
-          continue;
-        }
-        f[k][nx][ny] = f_[k][i][j];
+        f[k][i][j] = f_[k][i][j];
       }
+    }
+  }
+  // for (j = 0; j <= m; j++) {
+  //   for (i = 0; i <= n; i++) {
+  //     for (k = 0; k <= 8; k++) {
+  //       int nx = i + c_v[k][0];
+  //       int ny = j + c_v[k][1];
+
+  //      // if (nx == -1) {
+  //      //   nx = 0;
+  //      // }
+  //      // if (nx > n) {
+  //      //   nx = n;
+  //      // }
+  //      // if (ny == -1) {
+  //      //   ny = 0;
+  //      // }
+  //      // if (ny > n) {
+  //      //   ny = m;
+  //      // }
+  //      if (k == 1 && nx > n) {
+  //        continue;
+  //      }
+  //      if (k == 2 && ny > m) {
+  //        continue;
+  //      }
+  //      if (k == 3 && nx == -1) {
+  //        continue;
+  //      }
+  //      if (k == 4 && ny == -1) {
+  //        continue;
+  //      }
+  //      if (k == 5 && (nx > n || ny > m)) {
+  //        continue;
+  //      }
+  //      if (k == 6 && (nx == -1 || ny > m)) {
+  //        continue;
+  //      }
+  //      if (k == 7 && (nx == -1 || ny == -1)) {
+  //        continue;
+  //      }
+  //      if (k == 8 && (nx > n || ny == -1)) {
+  //        continue;
+  //      }
+  //      // if (k == 1 && nx > n) {
+  //      //   nx = 0;
+  //      // }
+  //      // if (k == 2 && ny > m) {
+  //      //   ny = 0;
+  //      // }
+  //      // if (k == 3 && nx == -1) {
+  //      //   nx = n;
+  //      // }
+  //      // if (k == 4 && ny == -1) {
+  //      //   ny = m;
+  //      // }
+  //      // if (k == 5 && (nx > n || ny > m)) {
+  //      //   nx = 0;
+  //      //   ny = 0;
+  //      // }
+  //      // if (k == 6 && (nx == -1 || ny > m)) {
+  //      //   nx = n;
+  //      //   ny = 0;
+  //      // }
+  //      // if (k == 7 && (nx == -1 || ny == -1)) {
+  //      //   nx = n;
+  //      //   ny = m;
+  //      // }
+  //      // if (k == 8 && (nx > n || ny == -1)) {
+  //      //   nx = 0;
+  //      //   ny = m;
+  //      // }
+  //      f[k][nx][ny] = f_[k][i][j];
+  //    }
+  //  }
+  //}
+  // for (j = 0; j <= m; j++) {
+  //  for (i = 0; i <= n; i++) {
+  //    f[0][i][j] = f_[0][i][j];
+  //  }
+  //}
+  for (j = 0; j <= m; j++) {
+    for (i = n; i > 0; i--) {
+      f[1][i][j] = f_[1][i - 1][j];
+    }
+    for (i = 0; i <= n - 1; i++) {
+      f[3][i][j] = f_[3][i + 1][j];
+    }
+  }
+  for (j = m; j > 0; j--) {
+    for (i = 0; i <= n; i++) {
+      f[2][i][j] = f_[2][i][j - 1];
+    }
+    for (i = n; i > 0; i--) {
+      f[5][i][j] = f_[5][i - 1][j - 1];
+    }
+    for (i = 0; i <= n - 1; i++) {
+      f[6][i][j] = f_[6][i + 1][j - 1];
+    }
+  }
+  for (j = 0; j <= m - 1; j++) {
+    for (i = 0; i <= n; i++) {
+      f[4][i][j] = f_[4][i][j + 1];
+    }
+    for (i = 0; i <= n - 1; i++) {
+      f[7][i][j] = f_[7][i + 1][j + 1];
+    }
+    for (i = n; i > 0; i--) {
+      f[8][i][j] = f_[8][i - 1][j + 1];
     }
   }
 }
@@ -145,28 +228,43 @@ void bounce(float f[9][101][101], float f_[9][101][101], int n, int m) {
   int i, j;
   // 西入口
   for (j = 0; j <= m; j++) {
-    f_[1][0][j] = f_[3][0][j];
-    f_[5][0][j] = f_[7][0][j];
-    f_[8][0][j] = f_[6][0][j];
+    for (i = 0; i <= n; i++) {
+      if (i == 0 || i == n || j == 0 || j == m) {
+        f_[6][i][j] = f[8][i][j];
+        f_[5][i][j] = f[7][i][j];
+        f_[8][i][j] = f[6][i][j];
+        f_[7][i][j] = f[5][i][j];
+        f_[2][i][j] = f[4][i][j];
+        f_[1][i][j] = f[3][i][j];
+        f_[4][i][j] = f[2][i][j];
+        f_[3][i][j] = f[1][i][j];
+        f_[0][i][j] = f[0][i][j];
+      }
+    }
   }
-  // 北反弹
-  for (i = 0; i <= n; i++) {
-    f_[4][i][m] = f_[2][i][m];
-    f_[8][i][m] = f_[6][i][m];
-    f_[7][i][m] = f_[5][i][m];
-  }
-  // 南反弹
-  for (i = 0; i <= n; i++) {
-    f_[2][i][0] = f_[4][i][0];
-    f_[5][i][0] = f_[7][i][0];
-    f_[6][i][0] = f_[8][i][0];
-  }
-  // 东反弹
-  for (j = 0; j <= m; j++) {
-    f_[3][n][j] = f_[1][n][j];
-    f_[7][n][j] = f_[5][n][j];
-    f_[6][n][j] = f_[8][n][j];
-  }
+  // for (j = 0; j <= m; j++) {
+  //   f_[1][0][j] = f_[3][0][j];
+  //   f_[5][0][j] = f_[7][0][j];
+  //   f_[8][0][j] = f_[6][0][j];
+  // }
+  //// 北反弹
+  // for (i = 0; i <= n; i++) {
+  //   f_[4][i][m] = f_[2][i][m];
+  //   f_[8][i][m] = f_[6][i][m];
+  //   f_[7][i][m] = f_[5][i][m];
+  // }
+  //// 南反弹
+  // for (i = 0; i <= n; i++) {
+  //   f_[2][i][0] = f_[4][i][0];
+  //   f_[5][i][0] = f_[7][i][0];
+  //   f_[6][i][0] = f_[8][i][0];
+  // }
+  //// 东反弹
+  // for (j = 0; j <= m; j++) {
+  //   f_[3][n][j] = f_[1][n][j];
+  //   f_[7][n][j] = f_[5][n][j];
+  //   f_[6][n][j] = f_[8][n][j];
+  // }
 }
 
 void gbound(float g[9][101][101], float w[9], float tw, int n, int m) {
@@ -362,9 +460,9 @@ int main() {
 
   // 主循环
   for (int kk = 1; kk <= mstep; kk++) {
+    streaming(n, m, f, f_);
     collision(u, v, f, f_, rho, w, cx, cy, n, m, omega, th, gbeta, tref);
     bounce(f, f_, n, m);
-    streaming(n, m, f, f_);
     rhouv(f, rho, u, v, cx, cy, n, m);
     collisiont(u, v, g, th, w, cx, cy, n, m, omegat);
     streamingt(n, m, g);
